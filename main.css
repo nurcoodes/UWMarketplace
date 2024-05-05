@@ -1,0 +1,74 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Set full height to ensure proper vertical centering */
+}
+
+nav {
+  color: white;
+  display: flex;
+  background-color: purple;
+  justify-content: space-around;
+  width: 100%; /* Full width */
+  padding: 10px 0; /* Add padding */
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+}
+
+.container {
+  text-align: center; /* Center text within container */
+  margin-top: 20px; /* Add top margin */
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 80%; /* Set main content width */
+  max-width: 800px; /* Limit maximum width */
+  height: 100%; /* Full height of viewport */
+  margin: auto; /* Center horizontally */
+  background-color: white; /* Set background color */
+  padding: 20px; /* Add padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+#typeFilter {
+  margin-bottom: 20px; /* Add space below filter */
+  padding: 10px; /* Add padding */
+  font-size: 16px; /* Increase font size */
+  width: 100%; /* Full width */
+  max-width: 200px; /* Limit maximum width */
+}
+
+#imageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%; /* Full width */
+}
+
+#imageGrid .item {
+  flex: 0 0 calc(33.33% - 20px); /* Adjust to 33.33% for three items per row */
+  max-width: calc(33.33% - 20px); /* Limit maximum width of item */
+  margin-bottom: 20px; /* Add bottom margin for spacing */
+  text-align: center; /* Center content horizontally */
+}
+
+#imageGrid .item img {
+  width: 100%; /* Make image fill its container horizontally */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 100%; /* Ensure image does not exceed its original width */
+}
+
+#imageGrid .item h2 {
+  margin-top: 10px; /* Add top margin for spacing */
+}
+
+div p {
+  color: gray;
+}
