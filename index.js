@@ -17,19 +17,16 @@
    * Sets up navigation links.
    */
   function setupNavigation() {
-    document.getElementById('home-link').addEventListener('click',
-      () => showSection('home-content'));
-    document.getElementById('upload-link').addEventListener('click',
-      () => showSection('upload-content'));
-    document.getElementById('profile-link').addEventListener('click',
-      () => showSection('profile-content'));
+    id('home-link').addEventListener('click', () => showSection('home-content'));
+    id('upload-link').addEventListener('click', () => showSection('upload-content'));
+    id('profile-link').addEventListener('click', () => showSection('profile-content'));
   }
 
   /**
    * Binds event listener for the filter.
    */
   function bindFilter() {
-    document.getElementById('type-filter').addEventListener('change', filterItems);
+    id('type-filter').addEventListener('change', filterItems);
   }
 
   /**
@@ -37,10 +34,10 @@
    * @param {string} sectionId - The id of the section to display.
    */
   function showSection(sectionId) {
-    document.querySelectorAll('.content-section').forEach(section => {
+    qsa('.content-section').forEach(section => {
       section.style.display = 'none';
     });
-    document.getElementById(sectionId).style.display = 'block';
+    id(sectionId).style.display = 'block';
   }
 
   /**
@@ -58,7 +55,7 @@
         imageUrl: 'img/stockphoto.jpeg'}
     ];
     items.forEach(item => {
-      document.getElementById('items-list').appendChild(createItemElement(item));
+      id('items-list').appendChild(createItemElement(item));
     });
   }
 
@@ -99,7 +96,7 @@
       <p>${item.description}</p>
       <button onclick="showSection('home-content')">Back to Listings</button>
     `;
-    const content = document.getElementById('content');
+    const content = id('content');
     content.innerHTML = '';
     content.appendChild(detailSection);
     content.style.display = 'block';
@@ -109,8 +106,8 @@
    * Filters items based on the selected filter option.
    */
   function filterItems() {
-    const filter = document.getElementById('type-filter').value;
-    const items = document.querySelectorAll('#items-list .item');
+    const filter = id('type-filter').value;
+    const items = qsa('#items-list .item');
     items.forEach(item => {
       if (filter === 'all' || item.dataset.type === filter) {
         item.style.display = 'block';
@@ -124,25 +121,43 @@
    * Sets up form listeners for handling form submissions.
    */
   function setupFormListeners() {
-    document.getElementById('upload-form').addEventListener('submit', function(event) {
+    id('upload-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const reader = new FileReader();
       reader.onload = function(img) {
         const newItem = {
-          type: document.getElementById('type').value,
-          name: document.getElementById('name').value,
-          description: document.getElementById('description').value,
+          type: id('type').value,
+          name: id('name').value,
+          description: id('description').value,
           imageUrl: img.target.result
         };
-        document.getElementById('items-list').appendChild(createItemElement(newItem));
+        id('items-list').appendChild(createItemElement(newItem));
         showSection('profile-content');
       };
-      const imageFile = document.getElementById('image').files[0];
+      const imageFile = id('image').files[0];
       if (imageFile) {
         reader.readAsDataURL(imageFile);
       } else {
         reader.onload({target: {result: 'img/stockphoto.jpeg'}});
       }
     });
+  }
+
+  /**
+   * Returns the element that has the ID attribute with the specified value.
+   * @param {string} name - element ID.
+   * @returns {object} - DOM object associated with id.
+   */
+  function id(name) {
+    return document.getElementById(name);
+  }
+
+  /**
+   * Returns an array of elements matching the given query.
+   * @param {string} selector - CSS query selector.
+   * @returns {array} - Array of DOM objects matching the given query.
+   */
+  function qsa(selector) {
+    return document.querySelectorAll(selector);
   }
 })();
