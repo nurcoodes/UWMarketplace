@@ -17,12 +17,12 @@
    * Sets up navigation links.
    */
   function setupNavigation() {
-    document.getElementById('home-link').addEventListener('click', () =>
-      showSection('home-content'));
-    document.getElementById('upload-link').addEventListener('click', () =>
-      showSection('upload-content'));
-    document.getElementById('profile-link').addEventListener('click', () =>
-      showSection('profile-content'));
+    document.getElementById('home-link').addEventListener('click',
+      () => showSection('home-content'));
+    document.getElementById('upload-link').addEventListener('click',
+      () => showSection('upload-content'));
+    document.getElementById('profile-link').addEventListener('click',
+      () => showSection('profile-content'));
   }
 
   /**
