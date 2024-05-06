@@ -7,7 +7,7 @@ body, html {
 nav {
   color: white;
   display: flex;
-  background-color: purple;
+  background-color: rgb(90, 30, 90);
   justify-content: space-around;
   width: 100%; /* Full width */
   padding: 10px 0; /* Add padding */
@@ -16,6 +16,7 @@ nav {
 nav a {
   text-decoration: none;
   color: white;
+  font-size: 20pt;
 }
 
 .container {
@@ -71,4 +72,26 @@ main {
 
 div p {
   color: gray;
+}
+
+#uploadContent, #profileContent {
+  display: none;
+}
+
+.content-section {
+  text-align: center; /* Centers text of all content sections */
+  margin-top: 20px; /* Provides some spacing from the header */
+}
+
+.user-info, .user-listings {
+  margin-top: 20px; /* Additional spacing for visual separation */
+}
+
+.user-info p, .user-listings h3 {
+  margin: 10px 0; /* Spacing around text elements for clarity */
+}
+
+.user-listings {
+  border-top: 1px solid #ccc; /* Visual separator between info and listings */
+  padding-top: 20px; /* Padding at the top of the listings section */
 }

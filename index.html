@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Husky Marketplace</title>
+  <link rel="stylesheet" href="index.css">
+  <script src="main.js"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <h1><a href="#" id="homeLink">Home</a></h1>
+      <h2><a href="#" id="uploadLink">Upload</a></h2>
+      <h3><a href="#" id="profileLink">Profile</a></h3>
+    </nav>
+  </header>
+  <main id="content">
+    <!-- Home Content -->
+    <div id="homeContent" class="content-section">
+      <p>Welcome to the Husky Marketplace. Browse, upload, or edit your listings!</p>
+      <label for="typeFilter">Filter by category:</label>
+      <select id="typeFilter">
+        <option value="all">All</option>
+        <option value="electronics">Electronics & Media</option>
+        <option value="home">Home</option>
+        <option value="clothing">Clothing</option>
+      </select>
+      <div id="itemsList">
+        <!-- Test items will be added here -->
+      </div>
+    </div>
+
+    <!-- Upload Form -->
+    <div id="uploadContent" class="content-section">
+      <h2>Upload New Item</h2>
+      <form id="uploadForm">
+        <label for="name">Item Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="type">Type:</label>
+        <select id="type" name="type">
+          <option value="all">All</option>
+          <option value="electronics">Electronics & Media</option>
+          <option value="home">Home</option>
+          <option value="clothing">Clothing</option>
+        </select>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+        <label for="image">Upload Image:</label>
+        <input type="file" id="image" name="image" accept="image/*">
+        <button type="submit">Upload Item</button>
+      </form>
+    </div>
+
+    <!-- Profile Section -->
+    <div id="profileContent" class="content-section" style="display:none;">
+      <div id="userInfo" class="user-info">
+        <h2>Your Profile</h2>
+        <p id="usernameDisplay">Username:</p>
+        <p id="emailDisplay">Email:</p>
+      </div>
+      <div id="userListings" class="user-listings">
+        <h3>Your Listings</h3>
+        <!-- Listings will be added here -->
+      </div>
+    </div>
+  </main>
+</body>
+</html>
