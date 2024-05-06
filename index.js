@@ -17,9 +17,12 @@
    * Sets up navigation links.
    */
   function setupNavigation() {
-    document.getElementById('home-link').addEventListener('click', () => showSection('home-content'));
-    document.getElementById('upload-link').addEventListener('click', () => showSection('upload-content'));
-    document.getElementById('profile-link').addEventListener('click', () => showSection('profile-content'));
+    document.getElementById('home-link').addEventListener('click', () =>
+    showSection('home-content'));
+    document.getElementById('upload-link').addEventListener('click', () =>
+    showSection('upload-content'));
+    document.getElementById('profile-link').addEventListener('click', () =>
+    showSection('profile-content'));
   }
 
   /**
@@ -45,10 +48,14 @@
    */
   function generateTestItems() {
     const items = [
-      { type: 'electronics', name: 'Macbook Air', description: 'A sleek and powerful laptop.', imageUrl: 'img/stockphoto.jpeg'},
-      { type: 'home', name: 'Old Sofa', description: 'Comfortable but old.', imageUrl: 'img/stockphoto.jpeg'},
-      { type: 'clothing', name: 'Lakers Jersey', description: 'Original Lakers Jersey.', imageUrl: 'img/stockphoto.jpeg'},
-      { type: 'all', name: 'Electric Guitar', description: 'A high-quality electric guitar.', imageUrl: 'img/stockphoto.jpeg'}
+      {type: 'electronics', name: 'Macbook Air', description: 'A sleek and powerful laptop.',
+      imageUrl: 'img/stockphoto.jpeg'},
+      {type: 'home', name: 'Old Sofa', description: 'Comfortable but old.',
+      imageUrl: 'img/stockphoto.jpeg'},
+      {type: 'clothing', name: 'Lakers Jersey', description: 'Original Lakers Jersey.',
+      imageUrl: 'img/stockphoto.jpeg'},
+      {type: 'all', name: 'Electric Guitar', description: 'A high-quality electric guitar.',
+      imageUrl: 'img/stockphoto.jpeg'}
     ];
     items.forEach(item => {
       document.getElementById('items-list').appendChild(createItemElement(item));
@@ -70,7 +77,7 @@
     img.src = item.imageUrl;
     img.alt = item.name;
     img.style.width = "100%";
-    
+
     const nameP = document.createElement('p');
     nameP.textContent = item.name;
     nameP.style.textAlign = 'center';
@@ -121,12 +128,12 @@
     document.getElementById('upload-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function(img) {
         const newItem = {
           type: document.getElementById('type').value,
           name: document.getElementById('name').value,
           description: document.getElementById('description').value,
-          imageUrl: e.target.result  // Image data URL
+          imageUrl: img.target.result  // Image data URL
         };
         document.getElementById('items-list').appendChild(createItemElement(newItem));
         showSection('profile-content');
@@ -135,7 +142,7 @@
       if (imageFile) {
         reader.readAsDataURL(imageFile);
       } else {
-        reader.onload({target: {result: 'img/stockphoto.jpeg'}});  // Use default image if no file is selected
+        reader.onload({target: {result: 'img/stockphoto.jpeg'}});
       }
     });
   }

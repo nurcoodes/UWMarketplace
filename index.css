@@ -4,14 +4,14 @@ body {
   padding: 0;
   background: #f4f4f4;
 }
-  
+
 header nav {
   padding: 10px 0;
 }
 
 header nav h1, header nav h2, header nav h3 {
   display: inline;
-  margin-right:100px;
+  margin-right: 100px;
   font-size: 16pt;
 }
 
@@ -21,7 +21,7 @@ header nav h1, header nav h2, header nav h3 {
   background: white;
   margin: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   min-height: 400px;
 }
 
