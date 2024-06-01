@@ -2,37 +2,26 @@
 (function() {
   window.addEventListener("load", init);
 
-  /**
-   * Initializes the application.
-   */
+  let sessionId = null;
+
   function init() {
     setupNavigation();
     bindFilter();
     setupFormListeners();
-    generateTestItems();
-    showSection('home-content');
+    loadItems();
+    checkLoginStatus();
   }
 
-  /**
-   * Sets up navigation links.
-   */
   function setupNavigation() {
     id('home-link').addEventListener('click', () => showSection('home-content'));
     id('upload-link').addEventListener('click', () => showSection('upload-content'));
-    id('profile-link').addEventListener('click', () => showSection('profile-content'));
+    id('profile-link').addEventListener('click', loadProfile);
   }
 
-  /**
-   * Binds event listener for the filter.
-   */
   function bindFilter() {
     id('type-filter').addEventListener('change', filterItems);
   }
 
-  /**
-   * Displays the specified section while hiding others.
-   * @param {string} sectionId - The id of the section to display.
-   */
   function showSection(sectionId) {
     qsa('.content-section').forEach(section => {
       section.style.display = 'none';
@@ -40,38 +29,27 @@
     id(sectionId).style.display = 'block';
   }
 
-  /**
-   * Generates test items and appends them to the items list.
-   */
-  function generateTestItems() {
-    const items = [
-      {type: 'electronics', name: 'Macbook Air', description: 'A sleek and powerful laptop.',
-        imageUrl: 'img/stockphoto.jpeg'},
-      {type: 'home', name: 'Old Sofa', description: 'Comfortable but old.',
-        imageUrl: 'img/stockphoto.jpeg'},
-      {type: 'clothing', name: 'Lakers Jersey', description: 'Original Lakers Jersey.',
-        imageUrl: 'img/stockphoto.jpeg'},
-      {type: 'all', name: 'Electric Guitar', description: 'A high-quality electric guitar.',
-        imageUrl: 'img/stockphoto.jpeg'}
-    ];
-    items.forEach(item => {
-      id('items-list').appendChild(createItemElement(item));
-    });
+  function loadItems() {
+    fetch('/marketplace')
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(items => {
+        id('items-list').innerHTML = '';
+        items.forEach(item => {
+          id('items-list').appendChild(createItemElement(item));
+        });
+      })
+      .catch(console.error);
   }
 
-  /**
-   * Creates a new item element.
-   * @param {Object} item - The item object containing information about the item.
-   * @returns {HTMLElement} - The newly created item element.
-   */
   function createItemElement(item) {
     const div = document.createElement('div');
     div.className = 'item';
-    div.dataset.type = item.type; // Store type for filtering
+    div.dataset.type = item.category;
     div.onclick = () => showItemDetails(item);
 
     const img = document.createElement('img');
-    img.src = item.imageUrl;
+    img.src = item.image;
     img.alt = item.name;
     img.style.width = "100%";
 
@@ -84,15 +62,11 @@
     return div;
   }
 
-  /**
-   * Displays details of the selected item.
-   * @param {Object} item - The item object to display details for.
-   */
   function showItemDetails(item) {
     const detailSection = document.createElement('div');
     detailSection.innerHTML = `
       <h2>${item.name}</h2>
-      <img src="${item.imageUrl}" alt="${item.name}" style="max-width: 90%; height: auto;">
+      <img src="${item.image}" alt="${item.name}" style="max-width: 90%; height: auto;">
       <p>${item.description}</p>
       <button onclick="showSection('home-content')">Back to Listings</button>
     `;
@@ -102,9 +76,6 @@
     content.style.display = 'block';
   }
 
-  /**
-   * Filters items based on the selected filter option.
-   */
   function filterItems() {
     const filter = id('type-filter').value;
     const items = qsa('#items-list .item');
@@ -117,22 +88,33 @@
     });
   }
 
-  /**
-   * Sets up form listeners for handling form submissions.
-   */
   function setupFormListeners() {
     id('upload-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const reader = new FileReader();
       reader.onload = function(img) {
         const newItem = {
-          type: id('type').value,
-          name: id('name').value,
+          title: id('name').value,
+          category: id('type').value,
           description: id('description').value,
-          imageUrl: img.target.result
+          image: img.target.result,
+          contact: "user@example.com" // replace with actual user contact info
         };
-        id('items-list').appendChild(createItemElement(newItem));
-        showSection('profile-content');
+        fetch('/upload/item', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-session-id': sessionId
+          },
+          body: JSON.stringify(newItem)
+        })
+        .then(checkStatus)
+        .then(resp => resp.json())
+        .then(() => {
+          id('items-list').appendChild(createItemElement(newItem));
+          loadProfile();
+        })
+        .catch(console.error);
       };
       const imageFile = id('image').files[0];
       if (imageFile) {
@@ -141,22 +123,80 @@
         reader.onload({target: {result: 'img/stockphoto.jpeg'}});
       }
     });
+
+    id('login-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const email = id('login-email').value;
+      const password = id('login-password').value;
+      fetch('/userauth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(data => {
+        sessionId = data.sessionId;
+        loadProfile();
+      })
+      .catch(console.error);
+    });
   }
 
-  /**
-   * Returns the element that has the ID attribute with the specified value.
-   * @param {string} name - element ID.
-   * @returns {object} - DOM object associated with id.
-   */
+  function loadProfile() {
+    if (!sessionId) {
+      // Show login section if not logged in
+      showSection('profile-content');
+      id('login-section').style.display = 'block';
+      id('user-info').style.display = 'none';
+      id('user-listings').style.display = 'none';
+      return;
+    }
+
+    fetch(`/account?userId=1`, { // replace 1 with actual user ID from session
+      headers: {
+        'x-session-id': sessionId
+      }
+    })
+    .then(checkStatus)
+    .then(resp => resp.json())
+    .then(profile => {
+      id('username-display').textContent = `Username: ${profile.user.email}`;
+      id('email-display').textContent = `Email: ${profile.user.email}`;
+      const userListingSection = id('user-listings');
+      userListingSection.innerHTML = '';
+      profile.listings.forEach(listing => {
+        userListingSection.appendChild(createItemElement(listing));
+      });
+      showSection('profile-content');
+      id('login-section').style.display = 'none';
+      id('user-info').style.display = 'block';
+      id('user-listings').style.display = 'block';
+    })
+    .catch(console.error);
+  }
+
+  function checkLoginStatus() {
+    if (!sessionId) {
+      showSection('login-content');
+    } else {
+      showSection('home-content');
+    }
+  }
+
+  function checkStatus(response) {
+    if (!response.ok) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+    return response;
+  }
+
   function id(name) {
     return document.getElementById(name);
   }
 
-  /**
-   * Returns an array of elements matching the given query.
-   * @param {string} selector - CSS query selector.
-   * @returns {array} - Array of DOM objects matching the given query.
-   */
   function qsa(selector) {
     return document.querySelectorAll(selector);
   }
