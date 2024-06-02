@@ -22,38 +22,6 @@ async function getDBConnection() {
     filename: 'uwmarketplace.db',
     driver: sqlite3.Database
   });
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS User (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS Listing (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      description TEXT NOT NULL,
-      image TEXT,
-      contact TEXT NOT NULL,
-      category TEXT NOT NULL,
-      price REAL NOT NULL,
-      userId INTEGER,
-      FOREIGN KEY(userId) REFERENCES User(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS Transaction (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      buyerId INTEGER,
-      sellerId INTEGER,
-      itemId INTEGER,
-      price REAL NOT NULL,
-      transactionType TEXT NOT NULL,
-      notes TEXT,
-      FOREIGN KEY(buyerId) REFERENCES User(id),
-      FOREIGN KEY(sellerId) REFERENCES User(id),
-      FOREIGN KEY(itemId) REFERENCES Listing(id)
-    );
-  `);
   return db;
 }
 
@@ -77,6 +45,7 @@ app.post('/userauth/register', async (req, res) => {
     await db.run('INSERT INTO User (email, password) VALUES (?, ?)', [email, password]);
     res.status(201).json({ message: 'User registered successfully.' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -99,6 +68,7 @@ app.post('/userauth/login', async (req, res) => {
       res.status(401).json({ error: 'Invalid email or password' });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -133,6 +103,7 @@ app.post('/upload/item', authMiddleware, async (req, res) => {
     );
     res.status(201).json({ message: 'Item successfully uploaded.', itemId: result.lastID });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -154,6 +125,7 @@ app.get('/marketplace', async (req, res) => {
     }
     res.json(items);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -174,6 +146,7 @@ app.get('/listing/item', async (req, res) => {
       res.status(404).json({ error: 'Item not found' });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -193,6 +166,7 @@ app.post('/transaction', authMiddleware, async (req, res) => {
     );
     res.status(201).json({ message: 'Transaction recorded successfully.', transactionId: result.lastID });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -211,6 +185,7 @@ app.get('/account', authMiddleware, async (req, res) => {
     const purchases = await db.all('SELECT * FROM Transaction WHERE buyerId = ?', [userId]);
     res.json({ user, listings, purchases });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
