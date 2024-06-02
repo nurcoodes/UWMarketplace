@@ -26,9 +26,10 @@
         <option value="clothing">Clothing</option>
       </select>
       <div id="items-list">
-        <!-- Test items will be added here -->
+        <!-- Items will be added here -->
       </div>
     </div>
+
     <!-- Upload Form -->
     <div id="upload-content" class="content-section">
       <h2>Upload New Item</h2>
@@ -49,6 +50,7 @@
         <button type="submit">Upload Item</button>
       </form>
     </div>
+
     <!-- Profile Section -->
     <div id="profile-content" class="content-section">
       <div id="login-section">
@@ -60,6 +62,7 @@
           <input type="password" id="login-password" name="login-password" required>
           <button type="submit">Login</button>
         </form>
+        <a href="#" id="create-account-link">Create Account</a>
       </div>
       <div id="user-info" class="user-info">
         <h2>Your Profile</h2>
@@ -70,6 +73,19 @@
         <h3>Your Listings</h3>
         <!-- Listings will be added here -->
       </div>
+    </div>
+
+    <!-- Register Section -->
+    <div id="register-content" class="content-section">
+      <h2>Create Account</h2>
+      <form id="register-form">
+        <label for="register-email">Email:</label>
+        <input type="email" id="register-email" name="register-email" required>
+        <label for="register-password">Password:</label>
+        <input type="password" id="register-password" name="register-password" required>
+        <button type="submit">Register</button>
+      </form>
+      <a href="#" id="back-to-login-link">Back to Login</a>
     </div>
   </main>
 </body>

@@ -22,6 +22,8 @@
     id('home-link').addEventListener('click', () => showSection('home-content'));
     id('upload-link').addEventListener('click', () => showSection('upload-content'));
     id('profile-link').addEventListener('click', loadProfile);
+    id('create-account-link').addEventListener('click', () => showSection('register-content'));
+    id('back-to-login-link').addEventListener('click', () => showSection('profile-content'));
   }
 
   /**
@@ -119,8 +121,6 @@
         item.style.display = 'none';
       }
     });
-    // id('home-content').innerHTML('').
-    // fetch('marketplace')
   }
 
   /**
@@ -180,6 +180,29 @@
         loadProfile();
       })
       .catch(console.error);
+    });
+
+    id('register-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const email = id('register-email').value;
+      const password = id('register-password').value;
+      fetch('/userauth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(data => {
+        alert('Account created successfully! Please login.');
+        showSection('profile-content');
+      })
+      .catch(err => {
+        console.error('Failed to register:', err);
+        alert('Failed to create account. Please try again.');
+      });
     });
   }
 

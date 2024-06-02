@@ -1,3 +1,4 @@
+
 body {
   font-family: "Arial", sans-serif;
   margin: 0;
@@ -22,14 +23,14 @@ header nav h1, header nav h2, header nav h3 {
   margin: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  min-height: fit-content;
+  min-height: 400px;
 }
 
 label {
   margin: 15px 0 5px;
 }
 
-input[type="text"], input[type="file"], select, textarea {
+input[type="text"], input[type="file"], input[type="email"], input[type="password"], select, textarea {
   padding: 8px;
   margin-top: 5px;
   box-sizing: border-box;
@@ -102,7 +103,7 @@ header nav h1, header nav h2, header nav h3, button, .item {
   display: block;
 }
 
-input[type="text"], input[type="file"], select, textarea, .item img, button {
+input[type="text"], input[type="file"], input[type="email"], input[type="password"], select, textarea, .item img, button {
   width: 100%;
   border-radius: 4px;
 }
@@ -111,7 +112,6 @@ input[type="text"], input[type="file"], select, textarea, .item img, button {
   background-size: cover;
 }
 
-/* New styles for login section */
 #login-section {
   max-width: 400px;
   margin: 0 auto;
@@ -120,7 +120,6 @@ input[type="text"], input[type="file"], select, textarea, .item img, button {
 #login-section form {
   display: flex;
   flex-direction: column;
-  padding-bottom: 20px;
 }
 
 #login-section label {
@@ -135,6 +134,7 @@ input[type="text"], input[type="file"], select, textarea, .item img, button {
 }
 
 #login-section button {
+  padding: 10px;
   background-color: rgb(90, 30, 90);
   color: white;
   border: none;
@@ -143,4 +143,47 @@ input[type="text"], input[type="file"], select, textarea, .item img, button {
 
 #login-section button:hover {
   background-color: rgb(143, 46, 143);
+}
+
+#register-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#register-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+#register-content label {
+  margin: 10px 0 5px;
+}
+
+#register-content input[type="email"], #register-content input[type="password"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#register-content button {
+  padding: 10px;
+  background-color: rgb(90, 30, 90);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#register-content button:hover {
+  background-color: rgb(143, 46, 143);
+}
+
+#register-content a, #login-section a {
+  color: rgb(90, 30, 90);
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+#register-content a:hover, #login-section a:hover {
+  text-decoration: underline;
 }
