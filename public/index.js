@@ -4,6 +4,9 @@
 
   let sessionId = null;
 
+  /**
+   * Initializes the application.
+   */
   function init() {
     setupNavigation();
     bindFilter();
@@ -12,23 +15,41 @@
     checkLoginStatus();
   }
 
+  /**
+   * Sets up the navigation event listeners.
+   */
   function setupNavigation() {
     id('home-link').addEventListener('click', () => showSection('home-content'));
     id('upload-link').addEventListener('click', () => showSection('upload-content'));
     id('profile-link').addEventListener('click', loadProfile);
   }
 
+  /**
+   * Binds the filter change event listener.
+   */
   function bindFilter() {
     id('type-filter').addEventListener('change', filterItems);
   }
 
+  /**
+   * Shows the specified section and hides others.
+   * @param {string} sectionId - The ID of the section to show.
+   */
   function showSection(sectionId) {
     qsa('.content-section').forEach(section => {
       section.style.display = 'none';
     });
-    id(sectionId).style.display = 'block';
+    const section = id(sectionId);
+    if (section) {
+      section.style.display = 'block';
+    } else {
+      console.error(`Section with ID ${sectionId} not found.`);
+    }
   }
 
+  /**
+   * Loads the items from the marketplace.
+   */
   function loadItems() {
     fetch('/marketplace')
       .then(checkStatus)
@@ -42,6 +63,11 @@
       .catch(console.error);
   }
 
+  /**
+   * Creates an item element.
+   * @param {Object} item - The item object.
+   * @returns {HTMLElement} The created item element.
+   */
   function createItemElement(item) {
     const div = document.createElement('div');
     div.className = 'item';
@@ -62,6 +88,10 @@
     return div;
   }
 
+  /**
+   * Shows the details of the specified item.
+   * @param {Object} item - The item object.
+   */
   function showItemDetails(item) {
     const detailSection = document.createElement('div');
     detailSection.innerHTML = `
@@ -76,6 +106,9 @@
     content.style.display = 'block';
   }
 
+  /**
+   * Filters the items based on the selected filter.
+   */
   function filterItems() {
     const filter = id('type-filter').value;
     const items = qsa('#items-list .item');
@@ -86,8 +119,13 @@
         item.style.display = 'none';
       }
     });
+    // id('home-content').innerHTML('').
+    // fetch('marketplace')
   }
 
+  /**
+   * Sets up the form listeners for handling form submissions.
+   */
   function setupFormListeners() {
     id('upload-form').addEventListener('submit', function(event) {
       event.preventDefault();
@@ -145,6 +183,9 @@
     });
   }
 
+  /**
+   * Loads the profile of the logged-in user.
+   */
   function loadProfile() {
     if (!sessionId) {
       // Show login section if not logged in
@@ -178,6 +219,9 @@
     .catch(console.error);
   }
 
+  /**
+   * Checks the login status and shows the appropriate sections.
+   */
   function checkLoginStatus() {
     if (!sessionId) {
       showSection('profile-content');
@@ -189,6 +233,11 @@
     }
   }
 
+  /**
+   * Checks the response status and throws an error if the response is not OK.
+   * @param {Response} response - The fetch response object.
+   * @returns {Response} The response if it is OK.
+   */
   function checkStatus(response) {
     if (!response.ok) {
       throw new Error(`${response.status}: ${response.statusText}`);
@@ -196,10 +245,20 @@
     return response;
   }
 
+  /**
+   * Gets an element by its ID.
+   * @param {string} name - The ID of the element.
+   * @returns {HTMLElement} The element with the specified ID.
+   */
   function id(name) {
     return document.getElementById(name);
   }
 
+  /**
+   * Gets all elements that match the specified selector.
+   * @param {string} selector - The CSS selector.
+   * @returns {NodeList} A NodeList of elements that match the selector.
+   */
   function qsa(selector) {
     return document.querySelectorAll(selector);
   }

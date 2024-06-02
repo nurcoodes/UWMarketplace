@@ -1,3 +1,4 @@
+"use strict";
 const express = require('express');
 const app = express();
 const sqlite = require('sqlite');
@@ -22,38 +23,6 @@ async function getDBConnection() {
     filename: 'uwmarketplace.db',
     driver: sqlite3.Database
   });
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS User (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS Listing (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      description TEXT NOT NULL,
-      image TEXT,
-      contact TEXT NOT NULL,
-      category TEXT NOT NULL,
-      price REAL NOT NULL,
-      userId INTEGER,
-      FOREIGN KEY(userId) REFERENCES User(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS Transaction (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      buyerId INTEGER,
-      sellerId INTEGER,
-      itemId INTEGER,
-      price REAL NOT NULL,
-      transactionType TEXT NOT NULL,
-      notes TEXT,
-      FOREIGN KEY(buyerId) REFERENCES User(id),
-      FOREIGN KEY(sellerId) REFERENCES User(id),
-      FOREIGN KEY(itemId) REFERENCES Listing(id)
-    );
-  `);
   return db;
 }
 
@@ -77,6 +46,7 @@ app.post('/userauth/register', async (req, res) => {
     await db.run('INSERT INTO User (email, password) VALUES (?, ?)', [email, password]);
     res.status(201).json({ message: 'User registered successfully.' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -99,6 +69,7 @@ app.post('/userauth/login', async (req, res) => {
       res.status(401).json({ error: 'Invalid email or password' });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -128,11 +99,12 @@ app.post('/upload/item', authMiddleware, async (req, res) => {
   try {
     const db = await getDBConnection();
     const result = await db.run(
-      'INSERT INTO Listing (title, description, image, contact, category, price, userId) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO Listings (title, description, image, contact, category, price, userId) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [title, description, image, contact, category, price, req.userId]
     );
     res.status(201).json({ message: 'Item successfully uploaded.', itemId: result.lastID });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -148,12 +120,13 @@ app.get('/marketplace', async (req, res) => {
     const db = await getDBConnection();
     let items;
     if (categories) {
-      items = await db.all('SELECT * FROM Listing WHERE category = ?', [categories]);
+      items = await db.all('SELECT * FROM Listings WHERE category = ?', [categories]);
     } else {
-      items = await db.all('SELECT * FROM Listing');
+      items = await db.all('SELECT * FROM Listings');
     }
     res.json(items);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -167,13 +140,14 @@ app.get('/listing/item', async (req, res) => {
   const { id } = req.query;
   try {
     const db = await getDBConnection();
-    const item = await db.get('SELECT * FROM Listing WHERE id = ?', [id]);
+    const item = await db.get('SELECT * FROM Listings WHERE id = ?', [id]);
     if (item) {
       res.json(item);
     } else {
       res.status(404).json({ error: 'Item not found' });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -193,6 +167,7 @@ app.post('/transaction', authMiddleware, async (req, res) => {
     );
     res.status(201).json({ message: 'Transaction recorded successfully.', transactionId: result.lastID });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -207,10 +182,11 @@ app.get('/account', authMiddleware, async (req, res) => {
   try {
     const db = await getDBConnection();
     const user = await db.get('SELECT * FROM User WHERE id = ?', [userId]);
-    const listings = await db.all('SELECT * FROM Listing WHERE userId = ?', [userId]);
+    const listings = await db.all('SELECT * FROM Listings WHERE userId = ?', [userId]);
     const purchases = await db.all('SELECT * FROM Transaction WHERE buyerId = ?', [userId]);
     res.json({ user, listings, purchases });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
