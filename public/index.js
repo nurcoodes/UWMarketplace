@@ -180,7 +180,10 @@
 
   function checkLoginStatus() {
     if (!sessionId) {
-      showSection('login-content');
+      showSection('profile-content');
+      id('login-section').style.display = 'block';
+      id('user-info').style.display = 'none';
+      id('user-listings').style.display = 'none';
     } else {
       showSection('home-content');
     }
