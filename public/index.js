@@ -69,7 +69,15 @@
       .then(items => {
         id('items-list').innerHTML = '';
         items.forEach(item => {
-          id('items-list').appendChild(createItemElement(item));
+          const itemElement = createItemElement(item);
+          itemElement.addEventListener('click', () => {
+            fetch(`/listing/item?id=${item.id}`)
+              .then(checkStatus)
+              .then(resp => resp.json())
+              .then(showItemDetails)
+              .catch(console.error);
+          });
+          id('items-list').appendChild(itemElement);
         });
       })
       .catch(console.error);
@@ -101,9 +109,9 @@
   }
 
 /**
-   * Shows the details of the specified item.
-   * @param {Object} item - The item object.
-   */
+ * Shows the details of the specified item.
+ * @param {Object} item - The item object.
+ */
 function showItemDetails(item) {
   const detailSection = document.createElement('div');
 
@@ -114,18 +122,31 @@ function showItemDetails(item) {
   const image = document.createElement('img');
   image.src = item.image;
   image.alt = item.name;
-  image.style.maxWidth = "50%";
+  image.style.maxWidth = "90%";
   image.style.height = "auto";
   detailSection.appendChild(image);
 
   const description = document.createElement('p');
-  description.textContent = item.description;
+  description.textContent = `Description: ${item.description}`;
   detailSection.appendChild(description);
+
+  const price = document.createElement('p');
+  price.textContent = `Price: $${item.price}`;
+  detailSection.appendChild(price);
+
+  const contact = document.createElement('p');
+  contact.textContent = `Contact: ${item.contact}`;
+  detailSection.appendChild(contact);
+
+  const sellerEmail = document.createElement('p');
+  sellerEmail.textContent = `Sold by: ${item.sellerEmail}`;
+  detailSection.appendChild(sellerEmail);
 
   const backButton = document.createElement('button');
   backButton.textContent = "Back to Listings";
-
-  backButton.addEventListener('click', () => showSection('home-content'));
+  backButton.addEventListener('click', () => {
+    id('home-content').style.display = 'none';
+  });
   detailSection.appendChild(backButton);
 
   const content = id('content');
@@ -133,6 +154,7 @@ function showItemDetails(item) {
   content.appendChild(detailSection);
   content.style.display = 'block';
 }
+
 
   /**
    * Filters the items based on the selected filter.
