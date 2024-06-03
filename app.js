@@ -178,13 +178,16 @@ app.post('/transaction', authMiddleware, async (req, res) => {
  * @param {Response} res - The Express response object.
  */
 app.get('/account', authMiddleware, async (req, res) => {
-  const { userId } = req.query;
+  const userId = req.userId; // Ensure this is coming from the auth middleware
   try {
     const db = await getDBConnection();
     const user = await db.get('SELECT * FROM User WHERE id = ?', [userId]);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     const listings = await db.all('SELECT * FROM Listings WHERE userId = ?', [userId]);
     const purchases = await db.all('SELECT * FROM Transaction WHERE buyerId = ?', [userId]);
-    res.json({ user, listings, purchases });
+  res.json({ user, listings/*, purchases*/ });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -196,6 +199,4 @@ app.get('/account', authMiddleware, async (req, res) => {
  * @param {number} PORT - The port number to listen on.
  */
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT);

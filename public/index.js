@@ -3,6 +3,7 @@
   window.addEventListener("load", init);
 
   let sessionId = null;
+  let userId = null; // Store user ID here
 
   /**
    * Initializes the application.
@@ -21,7 +22,7 @@
   function setupNavigation() {
     id('home-link').addEventListener('click', () => showSection('home-content'));
     id('upload-link').addEventListener('click', () => showSection('upload-content'));
-    id('profile-link').addEventListener('click', loadProfile);
+    id('profile-link').addEventListener('click', () => showSection('profile-content'));
     id('create-account-link').addEventListener('click', () => showSection('register-content'));
     id('back-to-login-link').addEventListener('click', () => showSection('profile-content'));
   }
@@ -41,6 +42,15 @@
     qsa('.content-section').forEach(section => {
       section.style.display = 'none';
     });
+    const section = id(sectionId);
+    if (section) {
+      section.style.display = 'block';
+    } else {
+      console.error(`Section with ID ${sectionId} not found.`);
+    }
+  }
+
+  function showSectionById(sectionId) {
     const section = id(sectionId);
     if (section) {
       section.style.display = 'block';
@@ -136,7 +146,8 @@
           category: id('type').value,
           description: id('description').value,
           image: img.target.result,
-          contact: "user@example.com" // replace with actual user contact info
+          contact: id('contact').value, // replace with actual user contact info
+          price: parseFloat(id('price').value) // Ensure price is a number
         };
         fetch('/upload/item', {
           method: 'POST',
@@ -177,6 +188,7 @@
       .then(resp => resp.json())
       .then(data => {
         sessionId = data.sessionId;
+        userId = data.userId; // Store the user ID
         loadProfile();
       })
       .catch(console.error);
@@ -210,16 +222,16 @@
    * Loads the profile of the logged-in user.
    */
   function loadProfile() {
-    if (!sessionId) {
+    if (!userId) {
       // Show login section if not logged in
-      showSection('profile-content');
-      id('login-section').style.display = 'block';
-      id('user-info').style.display = 'none';
-      id('user-listings').style.display = 'none';
+      showSectionById('profile-content');
+      id('login-section').style.display = 'none';
+      id('user-info').style.display = 'block';
+      id('user-listings').style.display = 'block';
       return;
     }
 
-    fetch(`/account?userId=1`, { // replace 1 with actual user ID from session
+    fetch(`/account?userId=${userId}`, { // Use stored user ID
       headers: {
         'x-session-id': sessionId
       }
@@ -235,9 +247,9 @@
         userListingSection.appendChild(createItemElement(listing));
       });
       showSection('profile-content');
-      id('login-section').style.display = 'none';
-      id('user-info').style.display = 'block';
-      id('user-listings').style.display = 'block';
+      id('login-section').style.display = 'block';
+      id('user-info').style.display = 'none';
+      id('user-listings').style.display = 'none';
     })
     .catch(console.error);
   }
@@ -246,8 +258,8 @@
    * Checks the login status and shows the appropriate sections.
    */
   function checkLoginStatus() {
-    if (!sessionId) {
-      showSection('profile-content');
+    if (!userId) {
+      showSectionById('profile-content');
       id('login-section').style.display = 'block';
       id('user-info').style.display = 'none';
       id('user-listings').style.display = 'none';
