@@ -140,7 +140,13 @@ app.get('/listing/item', async (req, res) => {
   const { id } = req.query;
   try {
     const db = await getDBConnection();
-    const item = await db.get('SELECT * FROM Listings WHERE id = ?', [id]);
+    const item = await db.get(`
+      SELECT Listings.*, User.email AS sellerEmail 
+      FROM Listings 
+      JOIN User ON Listings.userId = User.id 
+      WHERE Listings.id = ?
+    `, [id]);
+
     if (item) {
       res.json(item);
     } else {
