@@ -100,23 +100,39 @@
     return div;
   }
 
-  /**
+/**
    * Shows the details of the specified item.
    * @param {Object} item - The item object.
    */
-  function showItemDetails(item) {
-    const detailSection = document.createElement('div');
-    detailSection.innerHTML = `
-      <h2>${item.name}</h2>
-      <img src="${item.image}" alt="${item.name}" style="max-width: 90%; height: auto;">
-      <p>${item.description}</p>
-      <button onclick="showSection('home-content')">Back to Listings</button>
-    `;
-    const content = id('content');
-    content.innerHTML = '';
-    content.appendChild(detailSection);
-    content.style.display = 'block';
-  }
+function showItemDetails(item) {
+  const detailSection = document.createElement('div');
+
+  const title = document.createElement('h2');
+  title.textContent = item.name;
+  detailSection.appendChild(title);
+
+  const image = document.createElement('img');
+  image.src = item.image;
+  image.alt = item.name;
+  image.style.maxWidth = "50%";
+  image.style.height = "auto";
+  detailSection.appendChild(image);
+
+  const description = document.createElement('p');
+  description.textContent = item.description;
+  detailSection.appendChild(description);
+
+  const backButton = document.createElement('button');
+  backButton.textContent = "Back to Listings";
+
+  backButton.addEventListener('click', () => showSection('home-content'));
+  detailSection.appendChild(backButton);
+
+  const content = id('content');
+  content.innerHTML = '';
+  content.appendChild(detailSection);
+  content.style.display = 'block';
+}
 
   /**
    * Filters the items based on the selected filter.
