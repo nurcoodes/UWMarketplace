@@ -1,4 +1,3 @@
-
 body {
   font-family: "Arial", sans-serif;
   margin: 0;
@@ -41,6 +40,10 @@ button {
   border: none;
   padding: 10px 20px;
   margin-top: 10px;
+  background-color: rgb(90, 30, 90);
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 button:hover {
@@ -135,14 +138,16 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
 
 #login-section button {
   padding: 10px;
-  background-color: rgb(90, 30, 90);
-  color: white;
-  border: none;
-  cursor: pointer;
 }
 
-#login-section button:hover {
-  background-color: rgb(143, 46, 143);
+#login-section a {
+  color: rgb(90, 30, 90);
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+#login-section a:hover {
+  text-decoration: underline;
 }
 
 #register-content {
@@ -168,23 +173,15 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
 
 #register-content button {
   padding: 10px;
-  background-color: rgb(90, 30, 90);
-  color: white;
-  border: none;
-  cursor: pointer;
 }
 
-#register-content button:hover {
-  background-color: rgb(143, 46, 143);
-}
-
-#register-content a, #login-section a {
+#register-content a {
   color: rgb(90, 30, 90);
   text-decoration: none;
   margin-top: 10px;
 }
 
-#register-content a:hover, #login-section a:hover {
+#register-content a:hover {
   text-decoration: underline;
 }
 
@@ -221,4 +218,17 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
 
 .notification.error {
   background-color: #f44336;
+}
+
+#detail-section h2, #detail-section img, #detail-section p, #detail-section button {
+  margin-bottom: 10px;
+}
+
+#detail-section {
+  display: none; /* Initially hidden */
+  padding: 20px;
+  background: white;
+  margin: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
