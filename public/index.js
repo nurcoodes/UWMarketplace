@@ -92,7 +92,6 @@
     const div = document.createElement('div');
     div.className = 'item';
     div.dataset.type = item.category;
-    div.onclick = () => showItemDetails(item);
 
     const img = document.createElement('img');
     img.src = item.image;
@@ -108,53 +107,54 @@
     return div;
   }
 
-/**
- * Shows the details of the specified item.
- * @param {Object} item - The item object.
- */
-function showItemDetails(item) {
-  const detailSection = document.createElement('div');
+  /**
+   * Shows the details of the specified item.
+   * @param {Object} item - The item object.
+   */
+  function showItemDetails(item) {
+    const detailSection = document.createElement('div');
+    detailSection.id = 'detail-section';
 
-  const title = document.createElement('h2');
-  title.textContent = item.name;
-  detailSection.appendChild(title);
+    const title = document.createElement('h2');
+    title.textContent = item.name;
+    detailSection.appendChild(title);
 
-  const image = document.createElement('img');
-  image.src = item.image;
-  image.alt = item.name;
-  image.style.maxWidth = "90%";
-  image.style.height = "auto";
-  detailSection.appendChild(image);
+    const image = document.createElement('img');
+    image.src = item.image;
+    image.alt = item.name;
+    image.style.maxWidth = "90%";
+    image.style.height = "auto";
+    detailSection.appendChild(image);
 
-  const description = document.createElement('p');
-  description.textContent = `Description: ${item.description}`;
-  detailSection.appendChild(description);
+    const description = document.createElement('p');
+    description.textContent = `Description: ${item.description}`;
+    detailSection.appendChild(description);
 
-  const price = document.createElement('p');
-  price.textContent = `Price: $${item.price}`;
-  detailSection.appendChild(price);
+    const price = document.createElement('p');
+    price.textContent = `Price: $${item.price}`;
+    detailSection.appendChild(price);
 
-  const contact = document.createElement('p');
-  contact.textContent = `Contact: ${item.contact}`;
-  detailSection.appendChild(contact);
+    const contact = document.createElement('p');
+    contact.textContent = `Contact: ${item.contact}`;
+    detailSection.appendChild(contact);
 
-  const sellerEmail = document.createElement('p');
-  sellerEmail.textContent = `Sold by: ${item.sellerEmail}`;
-  detailSection.appendChild(sellerEmail);
+    const sellerEmail = document.createElement('p');
+    sellerEmail.textContent = `Sold by: ${item.sellerEmail}`;
+    detailSection.appendChild(sellerEmail);
 
-  const backButton = document.createElement('button');
-  backButton.textContent = "Back to Listings";
-  backButton.addEventListener('click', () => {
-    id('home-content').style.display = 'none';
-  });
-  detailSection.appendChild(backButton);
+    const backButton = document.createElement('button');
+    backButton.textContent = "Back to Listings";
+    backButton.addEventListener('click', () => {
+      id('detail-section').style.display = 'none';
+      id('home-content').style.display = 'block';
+    });
+    detailSection.appendChild(backButton);
 
-  const content = id('content');
-  content.innerHTML = '';
-  content.appendChild(detailSection);
-  content.style.display = 'block';
-}
-
+    const content = id('content');
+    content.innerHTML = '';
+    content.appendChild(detailSection);
+    detailSection.style.display = 'block';
+  }
 
   /**
    * Filters the items based on the selected filter.
@@ -246,7 +246,7 @@ function showItemDetails(item) {
       .then(checkStatus)
       .then(resp => resp.json())
       .then(data => {
-        showMessage('Failed to create account. Please try again.', 'success');
+        showMessage('Successfully created accounnt', 'success');
         showSection('profile-content');
       })
       .catch(err => {
@@ -263,9 +263,9 @@ function showItemDetails(item) {
     if (!userId) {
       // Show login section if not logged in
       showSectionById('profile-content');
-      id('login-section').style.display = 'none';
-      id('user-info').style.display = 'block';
-      id('user-listings').style.display = 'block';
+      id('login-section').style.display = 'block';
+      id('user-info').style.display = 'none';
+      id('user-listings').style.display = 'none';
       return;
     }
 
@@ -285,9 +285,9 @@ function showItemDetails(item) {
         userListingSection.appendChild(createItemElement(listing));
       });
       showSection('profile-content');
-      id('login-section').style.display = 'block';
-      id('user-info').style.display = 'none';
-      id('user-listings').style.display = 'none';
+      id('login-section').style.display = 'none';
+      id('user-info').style.display = 'block';
+      id('user-listings').style.display = 'block';
     })
     .catch(handleError);
   }
@@ -309,7 +309,7 @@ function showItemDetails(item) {
   /**
    * Displays a message in the page's designated message area.
    * Adjusts styling based on the message type ('success' or 'error').
-   * 
+   *
    * @param {string} message - The message to display.
    * @param {string} type - The type of the message ('success' or 'error').
    */
@@ -327,7 +327,7 @@ function showItemDetails(item) {
 
   /**
    * Specialized function to handle errors by displaying them using the showMessage function.
-   * 
+   *
    * @param {Error} error - The error object to process.
    */
   function handleError(error) {
