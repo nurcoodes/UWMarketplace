@@ -200,7 +200,7 @@ function showItemDetails(item) {
       .then(resp => resp.json())
       .then(data => {
         sessionId = data.sessionId;
-        userId = data.userId; // Store the user ID
+        userId = data.userId; // Ensure userId is set here
         loadProfile();
       })
       .catch(handleError);
@@ -220,7 +220,7 @@ function showItemDetails(item) {
       .then(checkStatus)
       .then(resp => resp.json())
       .then(data => {
-        showMessage('Failed to create account. Please try again.', 'success');
+        showMessage('Successfully created account!', 'success');
         showSection('profile-content');
       })
       .catch(err => {
@@ -230,40 +230,52 @@ function showItemDetails(item) {
     });
   }
 
-  /**
-   * Loads the profile of the logged-in user.
-   */
-  function loadProfile() {
-    if (!userId) {
-      // Show login section if not logged in
-      showSectionById('profile-content');
-      id('login-section').style.display = 'none';
-      id('user-info').style.display = 'block';
-      id('user-listings').style.display = 'block';
-      return;
-    }
-
-    fetch(`/account?userId=${userId}`, { // Use stored user ID
-      headers: {
-        'x-session-id': sessionId
-      }
-    })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(profile => {
-      id('email-display').textContent = `Email: ${profile.user.email}`;
-      const userListingSection = id('user-listings');
-      userListingSection.innerHTML = '';
-      profile.listings.forEach(listing => {
-        userListingSection.appendChild(createItemElement(listing));
-      });
-      showSection('profile-content');
-      id('login-section').style.display = 'block';
-      id('user-info').style.display = 'none';
-      id('user-listings').style.display = 'none';
-    })
-    .catch(handleError);
+/**
+ * Loads the profile of the logged-in user.
+ */
+function loadProfile() {
+  console.log("first line")
+  if (!userId) {
+    // Show login section if not logged in
+    showSectionById('profile-content');
+    id('login-section').style.display = 'none';
+    id('user-info').style.display = 'block';
+    id('user-listings').style.display = 'block';
+    return;
   }
+  console.log("hellow world");
+  fetch(`/account`, { // No need to pass userId as it's determined from session
+    headers: {
+      'x-session-id': sessionId
+    }
+  })
+  .then(checkStatus)
+  .then(resp => resp.json())
+  .then(profile => {
+    id('email-display').textContent = `Email: ${profile.user.email}`;
+    const userListingSection = id('user-listings').querySelector('.items-list');
+    userListingSection.innerHTML = '';
+
+    profile.listings.forEach(item => {
+      const itemElement = createItemElement(item);
+      itemElement.addEventListener('click', () => {
+        fetch(`/listing/item?id=${item.id}`)
+          .then(checkStatus)
+          .then(resp => resp.json())
+          .then(showItemDetails)
+          .catch(handleError);
+      });
+      userListingSection.appendChild(itemElement);
+    });
+
+    showSection('profile-content');
+    id('login-section').style.display = 'none';
+    id('user-info').style.display = 'block';
+    id('user-listings').style.display = 'block';
+    console.log("end");
+  })
+  .catch(handleError);
+}
 
   /**
    * Checks the login status and shows the appropriate sections.

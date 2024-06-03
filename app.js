@@ -19,11 +19,17 @@ const sessions = {};
  * @returns {Promise<sqlite.Database>} A promise that resolves to the database connection.
  */
 async function getDBConnection() {
-  const db = await sqlite.open({
-    filename: 'uwmarketplace.db',
-    driver: sqlite3.Database
-  });
-  return db;
+  try {
+    const db = await sqlite.open({
+      filename: 'uwmarketplace.db',
+      driver: sqlite3.Database
+    });
+    console.log("Database connection established");
+    return db;
+  } catch (err) {
+    console.error("Error establishing database connection", err);
+    throw err;
+  }
 }
 
 /**
@@ -64,7 +70,7 @@ app.post('/userauth/login', async (req, res) => {
     if (user) {
       const sessionId = generateSessionId();
       sessions[sessionId] = user.id;
-      res.json({ sessionId });
+      res.json({ sessionId, userId: user.id }); // Return userId along with sessionId
     } else {
       res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -83,9 +89,11 @@ app.post('/userauth/login', async (req, res) => {
 function authMiddleware(req, res, next) {
   const sessionId = req.header('x-session-id');
   if (!sessionId || !sessions[sessionId]) {
+    console.log(`Invalid sessionId: ${sessionId}`);
     return res.status(401).json({ error: 'Not authenticated' });
   }
   req.userId = sessions[sessionId];
+  console.log(`Authenticated userId: ${req.userId}`);
   next();
 }
 
@@ -185,17 +193,25 @@ app.post('/transaction', authMiddleware, async (req, res) => {
  */
 app.get('/account', authMiddleware, async (req, res) => {
   const userId = req.userId; // Ensure this is coming from the auth middleware
+  console.log(`Fetching account details for userId: ${userId}`); // Log userId for debugging
   try {
     const db = await getDBConnection();
     const user = await db.get('SELECT * FROM User WHERE id = ?', [userId]);
     if (!user) {
+      console.log(`User not found for userId: ${userId}`);
       return res.status(404).json({ error: 'User not found' });
     }
-    const listings = await db.all('SELECT * FROM Listings WHERE userId = ?', [userId]);
-    const purchases = await db.all('SELECT * FROM Transaction WHERE buyerId = ?', [userId]);
-    res.json({ user, listings, purchases });
+    console.log(`User found: ${user.email}`);
+    const listings = await db.all(`
+      SELECT Listings.*, User.email AS sellerEmail
+      FROM Listings
+      JOIN User ON Listings.userId = User.id
+      WHERE Listings.userId = ?
+    `, [userId]);
+    console.log(`Found ${listings.length} listings for userId: ${userId}`);
+    res.json({ user, listings });
   } catch (err) {
-    console.error(err);
+    console.error(`Error fetching account details for userId: ${userId}`, err);
     res.status(500).json({ error: err.message });
   }
 });
