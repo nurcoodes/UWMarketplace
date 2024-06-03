@@ -142,6 +142,10 @@ app.get('/listing/item', async (req, res) => {
     const db = await getDBConnection();
     const item = await db.get('SELECT * FROM Listings WHERE id = ?', [id]);
     if (item) {
+      const user = await db.get('SELECT email FROM User WHERE id = ?', [item.userId]);
+      if (user) {
+        item.sellerEmail = user.email;
+      }
       res.json(item);
     } else {
       res.status(404).json({ error: 'Item not found' });
