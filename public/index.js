@@ -97,11 +97,11 @@
 
     const img = document.createElement('img');
     img.src = item.image;
-    img.alt = item.name;
+    img.alt = item.title;
     img.style.width = "100%";
 
     const nameP = document.createElement('p');
-    nameP.textContent = item.name;
+    nameP.textContent = item.title;
     nameP.style.textAlign = 'center';
 
     div.appendChild(img);
@@ -114,9 +114,9 @@
  * @param {Object} item - The item object.
  */
 function showItemDetails(item) {
-  id('listing-title').textContent = item.name;
+  id('listing-title').textContent = item.title;
   id('listing-image').src = item.image;
-  id('listing-image').alt = item.name;
+  id('listing-image').alt = item.title;
   id('listing-description').textContent = `Description: ${item.description}`;
   id('listing-price').textContent = `Price: $${item.price}`;
   id('listing-contact').textContent = `Contact: ${item.contact}`;
@@ -251,7 +251,6 @@ function showItemDetails(item) {
     .then(checkStatus)
     .then(resp => resp.json())
     .then(profile => {
-      id('username-display').textContent = `Username: ${profile.user.email}`;
       id('email-display').textContent = `Email: ${profile.user.email}`;
       const userListingSection = id('user-listings');
       userListingSection.innerHTML = '';
