@@ -75,12 +75,12 @@
               .then(checkStatus)
               .then(resp => resp.json())
               .then(showItemDetails)
-              .catch(console.error);
+              .catch(handleError);
           });
           id('items-list').appendChild(itemElement);
         });
       })
-      .catch(console.error);
+      .catch(handleError);
   }
 
   /**
@@ -201,7 +201,7 @@ function showItemDetails(item) {
           id('items-list').appendChild(createItemElement(newItem));
           loadProfile();
         })
-        .catch(console.error);
+        .catch(handleError);
       };
       const imageFile = id('image').files[0];
       if (imageFile) {
@@ -229,7 +229,7 @@ function showItemDetails(item) {
         userId = data.userId; // Store the user ID
         loadProfile();
       })
-      .catch(console.error);
+      .catch(handleError);
     });
 
     id('register-form').addEventListener('submit', function(event) {
@@ -246,12 +246,12 @@ function showItemDetails(item) {
       .then(checkStatus)
       .then(resp => resp.json())
       .then(data => {
-        alert('Account created successfully! Please login.');
+        showMessage('Failed to create account. Please try again.', 'success');
         showSection('profile-content');
       })
       .catch(err => {
-        console.error('Failed to register:', err);
-        alert('Failed to create account. Please try again.');
+        handleError(err);
+        showMessage('Failed to create account. Please try again.', 'error');
       });
     });
   }
@@ -289,7 +289,7 @@ function showItemDetails(item) {
       id('user-info').style.display = 'none';
       id('user-listings').style.display = 'none';
     })
-    .catch(console.error);
+    .catch(handleError);
   }
 
   /**
@@ -304,6 +304,35 @@ function showItemDetails(item) {
     } else {
       showSection('home-content');
     }
+  }
+
+  /**
+   * Displays a message in the page's designated message area.
+   * Adjusts styling based on the message type ('success' or 'error').
+   * 
+   * @param {string} message - The message to display.
+   * @param {string} type - The type of the message ('success' or 'error').
+   */
+  function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = message;
+    messageDiv.className = `notification ${type}`; // Apply appropriate class for styling
+    messageDiv.style.display = 'block'; // Show the message
+
+    // Automatically hide the message after 5 seconds
+    setTimeout(() => {
+      messageDiv.style.display = 'none';
+    }, 5000);
+  }
+
+  /**
+   * Specialized function to handle errors by displaying them using the showMessage function.
+   * 
+   * @param {Error} error - The error object to process.
+   */
+  function handleError(error) {
+    console.error("Error:", error);
+    showMessage(`An error occurred: ${error.message}`, 'error');
   }
 
   /**
