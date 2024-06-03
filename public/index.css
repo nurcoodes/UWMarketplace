@@ -203,3 +203,22 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
   margin-top: 10px;
   background-color: #ffdddd;
 }
+
+.notification {
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: none;
+}
+
+.notification.success {
+  background-color: #4CAF50;
+}
+
+.notification.error {
+  background-color: #f44336;
+}
