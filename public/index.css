@@ -232,3 +232,9 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+#listing-image {
+  max-width: 90%;
+  height: auto;
+  border-radius: 5px;
+}
