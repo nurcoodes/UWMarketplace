@@ -75,7 +75,7 @@ header nav a:hover {
   background: #eee url('img/stockphoto.jpeg') no-repeat center;
 }
 
-#items-list {
+.items-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
@@ -186,4 +186,8 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
 
 #register-content a:hover, #login-section a:hover {
   text-decoration: underline;
+}
+
+#login-form, #register-form {
+  padding-bottom: 10px;
 }

@@ -24,8 +24,10 @@
         <option value="electronics">Electronics &amp; Media</option>
         <option value="home">Home</option>
         <option value="clothing">Clothing</option>
+        <option value="automobile">Automobile</option>
+        <option value="miscellaneous">Miscellaneous</option>
       </select>
-      <div id="items-list">
+      <div id="items-list" class="items-list">
         <!-- Items will be added here -->
       </div>
     </div>
@@ -39,9 +41,11 @@
         <label for="type">Type:</label>
         <select id="type" name="type">
           <option value="all">All</option>
-          <option value="electronics">Electronics &amp; Media</option>
+          <option value="alectronics">Electronics &amp; Media</option>
           <option value="home">Home</option>
           <option value="clothing">Clothing</option>
+          <option value="automobile">Automobile</option>
+          <option value="miscellaneous">Miscellaneous</option>
         </select>
         <label for="description">Description:</label>
         <textarea id="description" name="description" required></textarea>
@@ -70,12 +74,21 @@
       </div>
       <div id="user-info" class="user-info">
         <h2>Your Profile</h2>
-        <p id="username-display">Username:</p>
         <p id="email-display">Email:</p>
       </div>
       <div id="user-listings" class="user-listings">
         <h3>Your Listings</h3>
         <!-- Listings will be added here -->
+        <div class="items-list">
+          <!-- Items will be added here -->
+        </div>
+      </div>
+      <div id="purchase-history" class="purchase-history">
+        <h3>Purchase History</h3>
+        <!-- Listings will be added here -->
+        <div class="items-list">
+          <!-- Items will be added here -->
+        </div>
       </div>
     </div>
 
