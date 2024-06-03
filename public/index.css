@@ -191,3 +191,34 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
 #login-form, #register-form {
   padding-bottom: 10px;
 }
+
+.hidden {
+  display: none;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #ffdddd;
+}
+
+.notification {
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: none;
+}
+
+.notification.success {
+  background-color: #4CAF50;
+}
+
+.notification.error {
+  background-color: #f44336;
+}
