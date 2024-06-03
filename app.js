@@ -187,7 +187,7 @@ app.get('/account', authMiddleware, async (req, res) => {
     }
     const listings = await db.all('SELECT * FROM Listings WHERE userId = ?', [userId]);
     const purchases = await db.all('SELECT * FROM Transaction WHERE buyerId = ?', [userId]);
-  res.json({ user, listings/*, purchases*/ });
+  res.json({ user, listings, purchases });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
