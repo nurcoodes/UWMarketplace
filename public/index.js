@@ -55,6 +55,7 @@
     if (section) {
       section.style.display = 'block';
     } else {
+      section.style.display = "none";
       console.error(`Section with ID ${sectionId} not found.`);
     }
   }
@@ -113,47 +114,20 @@
  * @param {Object} item - The item object.
  */
 function showItemDetails(item) {
-  const detailSection = document.createElement('div');
+  id('listing-title').textContent = item.name;
+  id('listing-image').src = item.image;
+  id('listing-image').alt = item.name;
+  id('listing-description').textContent = `Description: ${item.description}`;
+  id('listing-price').textContent = `Price: $${item.price}`;
+  id('listing-contact').textContent = `Contact: ${item.contact}`;
+  id('listing-seller-email').textContent = `Sold by: ${item.sellerEmail}`;
 
-  const title = document.createElement('h2');
-  title.textContent = item.name;
-  detailSection.appendChild(title);
-
-  const image = document.createElement('img');
-  image.src = item.image;
-  image.alt = item.name;
-  image.style.maxWidth = "90%";
-  image.style.height = "auto";
-  detailSection.appendChild(image);
-
-  const description = document.createElement('p');
-  description.textContent = `Description: ${item.description}`;
-  detailSection.appendChild(description);
-
-  const price = document.createElement('p');
-  price.textContent = `Price: $${item.price}`;
-  detailSection.appendChild(price);
-
-  const contact = document.createElement('p');
-  contact.textContent = `Contact: ${item.contact}`;
-  detailSection.appendChild(contact);
-
-  const sellerEmail = document.createElement('p');
-  sellerEmail.textContent = `Sold by: ${item.sellerEmail}`;
-  detailSection.appendChild(sellerEmail);
-
-  const backButton = document.createElement('button');
-  backButton.textContent = "Back to Listings";
-  backButton.addEventListener('click', () => {
-    id('home-content').style.display = 'none';
+  showSection('listing-content');
+  document.getElementById('back-to-listings').addEventListener('click', () => {
+    showSection('home-content');
   });
-  detailSection.appendChild(backButton);
-
-  const content = id('content');
-  content.innerHTML = '';
-  content.appendChild(detailSection);
-  content.style.display = 'block';
 }
+
 
 
   /**
