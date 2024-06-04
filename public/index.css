@@ -238,3 +238,9 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
   height: auto;
   border-radius: 5px;
 }
+
+#listing-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
