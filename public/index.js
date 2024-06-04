@@ -320,8 +320,8 @@
   /**
    * Handles the successful upload of an item.
    */
-  function handleUploadSuccess() {
-    id('items-list').appendChild(createItemElement());
+  function handleUploadSuccess(newItem) {
+    id('items-list').appendChild(createItemElement(newItem));
     loadProfile();
   }
 
