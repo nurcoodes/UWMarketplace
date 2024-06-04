@@ -29,7 +29,8 @@ label {
   margin: 15px 0 5px;
 }
 
-input[type="text"], input[type="file"], input[type="email"], input[type="password"], select, textarea {
+input[type="text"], input[type="file"], input[type="email"], 
+input[type="password"], select, textarea {
   padding: 8px;
   margin-top: 5px;
   box-sizing: border-box;
@@ -106,7 +107,8 @@ header nav h1, header nav h2, header nav h3, button, .item {
   display: block;
 }
 
-input[type="text"], input[type="file"], input[type="email"], input[type="password"], select, textarea, .item img, button {
+input[type="text"], input[type="file"], input[type="email"], 
+input[type="password"], select, textarea, .item img, button {
   width: 100%;
   border-radius: 4px;
 }
@@ -247,4 +249,8 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
 
 #delete-listing {
   background-color: #f44336;
+}
+
+#confirmation-message {
+  display: none;
 }

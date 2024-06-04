@@ -218,6 +218,7 @@
       } else {
         showMessage(`Transaction failed: ${data.message}`, 'error');
       }
+      confirmedTransaction = null;
       id('transaction-button').textContent = 'Confirm Purchase';
       id('confirmation-message').style.display = 'none';
     })
