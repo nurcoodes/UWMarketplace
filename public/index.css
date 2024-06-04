@@ -77,11 +77,12 @@ header nav a:hover {
 .item img {
   height: auto;
   opacity: 0.8;
+  width: 85%;
 }
 
-.item.no-image {
+/* .item.no-image {
   background: #eee url('img/stockphoto.jpeg') no-repeat center;
-}
+} */
 
 .items-list {
   display: flex;

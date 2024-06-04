@@ -67,7 +67,7 @@ app.post('/userauth/login', async (req, res) => {
   const {email, password} = req.body;
   try {
     const db = await getDBConnection();
-    const user = await db.get('SELECT * FROM User WHERE email = ? AND password = ?', 
+    const user = await db.get('SELECT * FROM User WHERE email = ? AND password = ?',
     [email, password]);
     if (user) {
       const sessionId = generateSessionId();
@@ -180,7 +180,7 @@ app.get('/account', authMiddleware, async (req, res) => {
     const user = await db.get('SELECT * FROM User WHERE id = ?', [userId]);
     const listings = await db.all('SELECT * FROM Listings WHERE userId = ?', [userId]);
     const purchases = await db.all(`
-      SELECT Transactions.*, Listings.title AS itemTitle
+      SELECT Transactions.*, Listings.title AS itemTitle, Listings.image, Listings.category
       FROM Transactions
       JOIN Listings ON Transactions.itemId = Listings.id
       WHERE Transactions.buyerId = ?

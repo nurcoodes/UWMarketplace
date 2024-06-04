@@ -119,15 +119,20 @@
 
     const img = document.createElement('img');
     img.src = item.image;
-    img.alt = item.title;
-    img.style.width = "100%";
+    img.alt = item.title || item.itemTitle;
+    img.style.width = "70%";
 
     const nameP = document.createElement('p');
-    nameP.textContent = item.title;
+    nameP.textContent = item.title || item.itemTitle;
     nameP.style.textAlign = 'center';
+
+    const priceP = document.createElement('p');
+    priceP.textContent = `Price: $${item.price}`;
+    priceP.style.textAlign = 'center';
 
     div.appendChild(img);
     div.appendChild(nameP);
+    div.appendChild(priceP);
     return div;
   }
 
@@ -236,7 +241,7 @@
       .then(profile => {
         const purchaseHistorySection = id('purchase-history').querySelector('.items-list');
         purchaseHistorySection.innerHTML = '';
-    
+
         profile.purchases.forEach(purchase => {
           const purchaseElement = document.createElement('div');
           purchaseElement.className = 'purchase';
@@ -281,7 +286,7 @@
     if (imageFile) {
       reader.readAsDataURL(imageFile);
     } else {
-      handleImageLoad({target: {result: 'img/stockphoto.jpeg'}});
+      handleImageLoad({target: {result: ''}});
     }
   }
 
@@ -294,7 +299,7 @@
       title: id('name').value,
       category: id('type').value,
       description: id('description').value,
-      image: img.target.result,
+      image: img.target.result || '',
       contact: id('contact').value,
       price: parseFloat(id('price').value)
     };
@@ -306,10 +311,10 @@
       },
       body: JSON.stringify(newItem)
     })
-      .then(checkStatus)
-      .then(resp => resp.json())
-      .then(handleUploadSuccess)
-      .catch(handleError);
+    .then(checkStatus)
+    .then(resp => resp.json())
+    .then(handleUploadSuccess)
+    .catch(handleError);
   }
 
   /**
@@ -447,7 +452,10 @@
   function displayProfile(profile) {
     id('email-display').textContent = `Email: ${profile.user.email}`;
     const userListingSection = id('user-listings').querySelector('.items-list');
+    const purchaseHistorySection = id('purchase-history').querySelector('.items-list');
+
     userListingSection.innerHTML = '';
+    purchaseHistorySection.innerHTML = '';
 
     profile.listings.forEach(item => {
       const itemElement = createItemElement(item);
@@ -455,6 +463,14 @@
         fetchItemDetails(item.id);
       });
       userListingSection.appendChild(itemElement);
+    });
+
+    profile.purchases.forEach(purchase => {
+      const purchaseElement = createItemElement(purchase);
+      purchaseElement.addEventListener('click', () => {
+        fetchItemDetails(purchase.itemId);
+      });
+      purchaseHistorySection.appendChild(purchaseElement);
     });
 
     showSection('profile-content');
