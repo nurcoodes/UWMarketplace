@@ -143,9 +143,9 @@
     id('listing-price').textContent = `Price: $${item.price}`;
     id('listing-contact').textContent = `Contact: ${item.contact}`;
     id('listing-seller-email').textContent = `Sold by: ${item.sellerEmail}`;
-  
+
     const transactionButton = id('transaction-button');
-  
+
     if (item.isSold === 1) {
       transactionButton.style.display = 'none';
       showMessage('This item has already been sold.', 'error');
@@ -159,13 +159,13 @@
         transactionButton.onclick = () => handleTransactionButtonClick(item);
       }
     }
-  
+
     showSection('listing-content');
     document.getElementById('back-to-listings').addEventListener('click', () => {
       showSection('home-content');
     });
   }
-  
+
   /**
    * Handles the transaction button click event.
    * @param {Object} item - The item object.
@@ -205,21 +205,21 @@
       },
       body: JSON.stringify(confirmedTransaction)
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(data => {
-      if (data.success) {
-        showMessage(`Transaction successful! Your confirmation number is ${data.confirmationNumber}`, 'success');
-        markItemAsSold(confirmedTransaction.itemId);
-        updatePurchaseHistory();
-      } else {
-        showMessage(`Transaction failed: ${data.message}`, 'error');
-      }
-      confirmedTransaction = null;
-      id('transaction-button').textContent = 'Confirm Purchase';
-      id('confirmation-message').style.display = 'none';
-    })
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(data => {
+        if (data.success) {
+          showMessage(`Transaction successful! Your confirmation number is ${data.confirmationNumber}`, 'success');
+          markItemAsSold(confirmedTransaction.itemId);
+          updatePurchaseHistory();
+        } else {
+          showMessage(`Transaction failed: ${data.message}`, 'error');
+        }
+        confirmedTransaction = null;
+        id('transaction-button').textContent = 'Confirm Purchase';
+        id('confirmation-message').style.display = 'none';
+      })
+      .catch(handleError);
   }
 
   /**
@@ -231,20 +231,20 @@
         'x-session-id': sessionId
       }
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(profile => {
-      const purchaseHistorySection = id('purchase-history').querySelector('.items-list');;
-      purchaseHistorySection.innerHTML = '';
-  
-      profile.purchases.forEach(purchase => {
-        const purchaseElement = document.createElement('div');
-        purchaseElement.className = 'purchase';
-        purchaseElement.textContent = `${purchase.itemTitle} - $${purchase.price}`;
-        purchaseHistorySection.appendChild(purchaseElement);
-      });
-    })
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(profile => {
+        const purchaseHistorySection = id('purchase-history').querySelector('.items-list');
+        purchaseHistorySection.innerHTML = '';
+    
+        profile.purchases.forEach(purchase => {
+          const purchaseElement = document.createElement('div');
+          purchaseElement.className = 'purchase';
+          purchaseElement.textContent = `${purchase.itemTitle} - $${purchase.price}`;
+          purchaseHistorySection.appendChild(purchaseElement);
+        });
+      })
+      .catch(handleError);
   }
 
   /**
@@ -281,7 +281,7 @@
     if (imageFile) {
       reader.readAsDataURL(imageFile);
     } else {
-      handleImageLoad({ target: { result: 'img/stockphoto.jpeg' } });
+      handleImageLoad({target: {result: 'img/stockphoto.jpeg'}});
     }
   }
 
@@ -306,10 +306,10 @@
       },
       body: JSON.stringify(newItem)
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(handleUploadSuccess)
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(handleUploadSuccess)
+      .catch(handleError);
   }
 
   /**
@@ -342,10 +342,10 @@
       },
       body: JSON.stringify({ email, password })
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(handleLoginSuccess)
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(handleLoginSuccess)
+      .catch(handleError);
   }
 
   /**
@@ -380,10 +380,10 @@
       },
       body: JSON.stringify({ email, password })
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(handleRegisterSuccess)
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(handleRegisterSuccess)
+      .catch(handleError);
   }
 
   /**
@@ -434,10 +434,10 @@
         'x-session-id': sessionId
       }
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(displayProfile)
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(displayProfile)
+      .catch(handleError);
   }
 
   /**
