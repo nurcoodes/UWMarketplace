@@ -173,14 +173,18 @@ app.get('/listing/item', async (req, res) => {
  */
 app.post('/transaction', authMiddleware, async (req, res) => {
   const { buyerId, sellerId, itemId, price, transactionType, notes } = req.body;
+  const db = await getDBConnection();
   try {
-    const db = await getDBConnection();
+    await db.run('BEGIN');  // Start transaction
     const result = await db.run(
       'INSERT INTO Transaction (buyerId, sellerId, itemId, price, transactionType, notes) VALUES (?, ?, ?, ?, ?, ?)',
       [buyerId, sellerId, itemId, price, transactionType, notes]
     );
+    await db.run('UPDATE Listings SET isSold = 1 WHERE id = ?', [itemId]);
+    await db.run('COMMIT');  // Commit transaction
     res.status(201).json({ message: 'Transaction recorded successfully.', transactionId: result.lastID });
   } catch (err) {
+    await db.run('ROLLBACK');  // Rollback in case of error
     console.error(err);
     res.status(500).json({ error: err.message });
   }
@@ -213,6 +217,33 @@ app.get('/account', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(`Error fetching account details for userId: ${userId}`, err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Checks if the specified item is available for purchase.
+ * This endpoint retrieves the sale status of an item by its ID.
+ * 
+ * @param {Request} req - The Express request object, containing the item's ID.
+ * @param {Response} res - The Express response object, which will return the item's availability.
+ */
+app.get('/check-item/:id', async (req, res) => {
+  const itemId = req.params.id;
+  try {
+    const db = await getDBConnection();
+    const item = await db.get('SELECT isSold FROM Listings WHERE id = ?', [itemId]);
+    if (!item) {
+      console.log(`Item with ID ${itemId} not found`);
+      res.status(404).json({ error: 'Item not found' });
+    } else if (item.isSold === 1) { // Check if isSold is 1 (sold)
+      console.log(`Item with ID ${itemId} is already sold`);
+      res.json({ available: false });
+    } else {
+      res.json({ available: true });
+    }
+  } catch (err) {
+    console.error(`Failed to check item availability for item ID ${itemId}`, err);
+    res.status(500).json({ error: 'Internal server error', details: err.message });
   }
 });
 

@@ -109,26 +109,80 @@
     return div;
   }
 
-/**
- * Shows the details of the specified item.
- * @param {Object} item - The item object.
- */
-function showItemDetails(item) {
-  id('listing-title').textContent = item.title;
-  id('listing-image').src = item.image;
-  id('listing-image').alt = item.title;
-  id('listing-description').textContent = `Description: ${item.description}`;
-  id('listing-price').textContent = `Price: $${item.price}`;
-  id('listing-contact').textContent = `Contact: ${item.contact}`;
-  id('listing-seller-email').textContent = `Sold by: ${item.sellerEmail}`;
+  /**
+   * Shows the details of the specified item.
+   * @param {Object} item - The item object.
+   */
+  function showItemDetails(item) {
+    id('listing-title').textContent = item.title;
+    id('listing-image').src = item.image;
+    id('listing-image').alt = item.title;
+    id('listing-description').textContent = `Description: ${item.description}`;
+    id('listing-price').textContent = `Price: $${item.price}`;
+    id('listing-contact').textContent = `Contact: ${item.contact}`;
+    id('listing-seller-email').textContent = `Sold by: ${item.sellerEmail}`;
+    const buyButton = id('buy-listing');
+    buyButton.style.display = 'block';
+    buyButton.onclick = () => buyItem(item);
+    showSection('listing-content');
+    document.getElementById('back-to-listings').addEventListener('click', () => {
+      showSection('home-content');
+    });
+  }
 
-  showSection('listing-content');
-  document.getElementById('back-to-listings').addEventListener('click', () => {
-    showSection('home-content');
-  });
-}
-
-
+  function buyItem(item) {
+    if (!userId) {
+      showMessage('Please log in to make a purchase.', 'error');
+      return;
+    }
+  
+    fetch(`/check-item/${item.id}`, { headers: { 'x-session-id': sessionId } })
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(data => {
+        if (data.available) {
+          const purchase = {
+            buyerId: userId,
+            itemId: item.id,
+            price: item.price
+          };
+  
+          fetch('/transaction', {
+            method: 'POST',
+            headers: {
+              'x-session-id': sessionId
+            },
+            body: JSON.stringify(purchase)
+          })
+            .then(checkStatus)
+            .then(resp => resp.json())
+            .then(data => {
+              showMessage('Purchase successful!', 'success');
+              updatePurchaseHistory();
+            })
+            .catch(handleError);
+        } else {
+          showMessage('This item has already been bought.', 'error');
+        }
+      })
+      .catch(handleError);
+  }
+  
+  function updatePurchaseHistory() {
+    fetch(`/account/purchases?userId=${userId}`, { headers: { 'x-session-id': sessionId } })
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(data => {
+        const purchasesDiv = id('purchase-history');
+        purchasesDiv.innerHTML = '';
+        data.purchases.forEach(purchase => {
+          const itemDiv = document.createElement('div');
+          itemDiv.textContent = `Bought: ${purchase.title} for $${purchase.price}`;
+          purchasesDiv.appendChild(itemDiv);
+        });
+      })
+      .catch(handleError);
+  }
 
   /**
    * Filters the items based on the selected filter.
