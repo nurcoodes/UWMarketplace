@@ -42,7 +42,7 @@
   function bindSearch() {
     id('search-bar').addEventListener('input', filterItems);
   }
-  
+
   /**
    * Filters the items based on the selected filter and search query.
    */
@@ -50,14 +50,14 @@
     const filter = id('type-filter').value;
     const searchQuery = id('search-bar').value.toLowerCase();
     const items = qsa('#items-list .item');
-    
+
     items.forEach(item => {
       const itemType = item.dataset.type;
       const itemName = item.querySelector('p').textContent.toLowerCase();
-      
+
       const matchesFilter = (filter === 'all' || itemType === filter);
       const matchesSearch = itemName.includes(searchQuery);
-  
+
       if (matchesFilter && matchesSearch) {
         item.style.display = 'block';
       } else {
@@ -78,16 +78,6 @@
     if (section) {
       section.style.display = 'block';
     } else {
-      console.error(`Section with ID ${sectionId} not found.`);
-    }
-  }
-
-  function showSectionById(sectionId) {
-    const section = id(sectionId);
-    if (section) {
-      section.style.display = 'block';
-    } else {
-      section.style.display = "none";
       console.error(`Section with ID ${sectionId} not found.`);
     }
   }
@@ -176,10 +166,14 @@
     });
   }
   
+  /**
+   * Handles the transaction button click event.
+   * @param {Object} item - The item object.
+   */
   function handleTransactionButtonClick(item) {
     const transactionButton = id('transaction-button');
     const confirmationMessage = id('confirmation-message');
-  
+
     if (transactionButton.textContent === 'Confirm Purchase') {
       confirmedTransaction = {
         buyerId: userId,
@@ -198,7 +192,10 @@
       submitTransaction();
     }
   }
-  
+
+  /**
+   * Submits the transaction to the server.
+   */
   function submitTransaction() {
     fetch('/transaction', {
       method: 'POST',
@@ -225,6 +222,9 @@
     .catch(handleError);
   }
 
+  /**
+   * Updates the purchase history by fetching the latest data from the server.
+   */
   function updatePurchaseHistory() {
     fetch(`/account`, {
       headers: {
@@ -247,6 +247,10 @@
     .catch(handleError);
   }
 
+  /**
+   * Marks an item as sold.
+   * @param {number} itemId - The ID of the item to mark as sold.
+   */
   function markItemAsSold(itemId) {
     const itemElement = document.querySelector(`.item[data-id='${itemId}']`);
     if (itemElement) {
@@ -258,11 +262,17 @@
     }
   }
 
-
+  /**
+   * Sets up the upload form listener.
+   */
   function setupUploadFormListener() {
     id('upload-form').addEventListener('submit', handleUploadFormSubmit);
   }
-  
+
+  /**
+   * Handles the upload form submission.
+   * @param {Event} event - The form submission event.
+   */
   function handleUploadFormSubmit(event) {
     event.preventDefault();
     const reader = new FileReader();
@@ -274,7 +284,11 @@
       handleImageLoad({ target: { result: 'img/stockphoto.jpeg' } });
     }
   }
-  
+
+  /**
+   * Handles the load event of an image.
+   * @param {Event} img - The load event of an image.
+   */
   function handleImageLoad(img) {
     const newItem = {
       title: id('name').value,
@@ -297,16 +311,26 @@
     .then(handleUploadSuccess)
     .catch(handleError);
   }
-  
+
+  /**
+   * Handles the successful upload of an item.
+   */
   function handleUploadSuccess() {
     id('items-list').appendChild(createItemElement(newItem));
     loadProfile();
   }
-  
+
+  /**
+   * Sets up event listener for the login form submission.
+   */
   function setupLoginFormListener() {
     id('login-form').addEventListener('submit', handleLoginFormSubmit);
   }
-  
+
+  /**
+   * Handles the submission of the login form.
+   * @param {Event} event - The submit event of the login form.
+   */
   function handleLoginFormSubmit(event) {
     event.preventDefault();
     const email = id('login-email').value;
@@ -323,17 +347,28 @@
     .then(handleLoginSuccess)
     .catch(handleError);
   }
-  
+
+  /**
+   * Handles the successful login.
+   * @param {Object} data - The data returned after successful login.
+   */
   function handleLoginSuccess(data) {
     sessionId = data.sessionId;
     userId = data.userId;
     loadProfile();
   }
-  
+
+  /**
+   * Sets up event listener for the registration form submission.
+   */
   function setupRegisterFormListener() {
     id('register-form').addEventListener('submit', handleRegisterFormSubmit);
   }
-  
+
+  /**
+   * Handles the submission of the registration form.
+   * @param {Event} event - The submit event of the registration form.
+   */
   function handleRegisterFormSubmit(event) {
     event.preventDefault();
     const email = id('register-email').value;
@@ -350,20 +385,27 @@
     .then(handleRegisterSuccess)
     .catch(handleError);
   }
-  
+
+  /**
+   * Handles the successful registration.
+   */
   function handleRegisterSuccess() {
     showMessage('Successfully created account!', 'success');
     showSection('profile-content');
   }
-  
+
+  /**
+   * Sets up form event listeners.
+   */
   function setupFormListeners() {
     setupUploadFormListener();
     setupLoginFormListener();
     setupRegisterFormListener();
   }
 
-
-
+  /**
+   * Loads user profile data.
+   */
   function loadProfile() {
     if (!userId) {
       showLoginSection();
@@ -372,14 +414,20 @@
     fetchProfileData();
   }
 
+  /**
+   * Displays the login section.
+   */
   function showLoginSection() {
-    showSectionById('profile-content');
+    showSection('profile-content');
     id('login-section').style.display = 'none';
     id('user-info').style.display = 'block';
     id('purchase-history').style.display = 'block';
     id('user-listings').style.display = 'block';
   }
 
+  /**
+   * Fetches user profile data.
+   */
   function fetchProfileData() {
     fetch(`/account`, {
       headers: {
@@ -392,6 +440,10 @@
     .catch(handleError);
   }
 
+  /**
+   * Displays user profile.
+   * @param {Object} profile - The user profile data.
+   */
   function displayProfile(profile) {
     id('email-display').textContent = `Email: ${profile.user.email}`;
     const userListingSection = id('user-listings').querySelector('.items-list');
@@ -412,6 +464,10 @@
     id('user-listings').style.display = 'block';
   }
 
+  /**
+   * Fetches details of an item.
+   * @param {string} itemId - The ID of the item to fetch details for.
+   */
   function fetchItemDetails(itemId) {
     fetch(`/listing/item?id=${itemId}`)
       .then(checkStatus)
@@ -425,7 +481,7 @@
    */
   function checkLoginStatus() {
     if (!userId) {
-      showSectionById('profile-content');
+      showSection('profile-content');
       id('login-section').style.display = 'block';
       id('user-info').style.display = 'none';
       id('purchase-history').style.display = 'none';
