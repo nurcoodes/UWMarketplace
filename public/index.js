@@ -240,6 +240,7 @@ function loadProfile() {
     showSectionById('profile-content');
     id('login-section').style.display = 'none';
     id('user-info').style.display = 'block';
+    id('purchase-history').style.display = 'block';
     id('user-listings').style.display = 'block';
     return;
   }
@@ -271,6 +272,7 @@ function loadProfile() {
     showSection('profile-content');
     id('login-section').style.display = 'none';
     id('user-info').style.display = 'block';
+    id('purchase-history').style.display = 'block';
     id('user-listings').style.display = 'block';
     console.log("end");
   })
@@ -285,6 +287,7 @@ function loadProfile() {
       showSectionById('profile-content');
       id('login-section').style.display = 'block';
       id('user-info').style.display = 'none';
+      id('purchase-history').style.display = 'none';
       id('user-listings').style.display = 'none';
     } else {
       showSection('home-content');
