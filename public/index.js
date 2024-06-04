@@ -234,7 +234,7 @@
     .then(checkStatus)
     .then(resp => resp.json())
     .then(profile => {
-      const purchaseHistorySection = id('purchase-history');
+      const purchaseHistorySection = id('purchase-history').querySelector('.items-list');;
       purchaseHistorySection.innerHTML = '';
   
       profile.purchases.forEach(purchase => {
