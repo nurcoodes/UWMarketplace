@@ -38,7 +38,7 @@ async function getDBConnection() {
  */
 function generateSessionId() {
   return Math.random().toString(36)
-  .substr(2, 9);
+    .substr(2, 9);
 }
 
 /**
@@ -67,8 +67,9 @@ app.post('/userauth/login', async (req, res) => {
   const {email, password} = req.body;
   try {
     const db = await getDBConnection();
-    const user = await db.get('SELECT * FROM User WHERE email = ? AND password = ?',
-    [email, password]);
+    const user = await db.get(
+      'SELECT * FROM User WHERE email = ? AND password = ?', [email, password]
+      );
     if (user) {
       const sessionId = generateSessionId();
       sessions[sessionId] = user.id;
@@ -87,15 +88,14 @@ app.post('/userauth/login', async (req, res) => {
  * @param {Request} req - The Express request object.
  * @param {Response} res - The Express response object.
  * @param {Function} next - The next middleware function.
+ * @return {status} - 401 status if user is not authencated.
  */
 function authMiddleware(req, res, next) {
   const sessionId = req.header('x-session-id');
   if (!sessionId || !sessions[sessionId]) {
-    console.log(`Invalid sessionId: ${sessionId}`);
     return res.status(401).json({error: 'Not authenticated'});
   }
   req.userId = sessions[sessionId];
-  console.log(`Authenticated userId: ${req.userId}`);
   next();
 }
 
@@ -109,9 +109,10 @@ app.post('/upload/item', authMiddleware, async (req, res) => {
   try {
     const db = await getDBConnection();
     const result = await db.run(
-      'INSERT INTO Listings (title, description, image, contact, category, price, userId) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO Listings (title, description, image, contact, category, price, userId) ' +
+      'VALUES (?, ?, ?, ?, ?, ?, ?)',
       [title, description, image, contact, category, price, req.userId]
-    );
+      );
     res.status(201).json({message: 'Item successfully uploaded.', itemId: result.lastID});
   } catch (err) {
     console.error(err);
@@ -227,7 +228,8 @@ app.post('/transaction', authMiddleware, async (req, res) => {
     const confirmationNumber = generateConfirmationNumber();
 
     await db.run(
-      'INSERT INTO Transactions (buyerId, sellerId, itemId, price, confirmationNumber) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO Transactions (buyerId, sellerId, itemId, price, confirmationNumber) ' +
+      'VALUES (?, ?, ?, ?, ?)',
       [buyerId, sellerId, itemId, price, confirmationNumber]
     );
 

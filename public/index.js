@@ -214,7 +214,7 @@
       .then(resp => resp.json())
       .then(data => {
         if (data.success) {
-          showMessage(`Transaction successful! Your confirmation number is ${data.confirmationNumber}`, 'success');
+          showMessage(`Successful! Confirmation:' + is ${data.confirmationNumber}`, 'success');
           markItemAsSold(confirmedTransaction.itemId);
           updatePurchaseHistory();
         } else {
@@ -311,17 +311,17 @@
       },
       body: JSON.stringify(newItem)
     })
-    .then(checkStatus)
-    .then(resp => resp.json())
-    .then(handleUploadSuccess)
-    .catch(handleError);
+      .then(checkStatus)
+      .then(resp => resp.json())
+      .then(handleUploadSuccess)
+      .catch(handleError);
   }
 
   /**
    * Handles the successful upload of an item.
    */
   function handleUploadSuccess() {
-    id('items-list').appendChild(createItemElement(newItem));
+    id('items-list').appendChild(createItemElement());
     loadProfile();
   }
 
