@@ -244,3 +244,7 @@ input[type="text"], input[type="file"], input[type="email"], input[type="passwor
   align-items: center;
   justify-content: center;
 }
+
+#delete-listing {
+  background-color: #f44336;
+}
