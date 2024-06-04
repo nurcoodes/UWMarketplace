@@ -167,84 +167,82 @@ app.get('/listing/item', async (req, res) => {
 });
 
 /**
- * Records a transaction between a buyer and a seller.
+ * Retrieves account details, including user information and listings.
  * @param {Request} req - The Express request object.
  * @param {Response} res - The Express response object.
  */
-app.post('/transaction', authMiddleware, async (req, res) => {
-  const { buyerId, sellerId, itemId, price, transactionType, notes } = req.body;
-  const db = await getDBConnection();
+app.get('/account', authMiddleware, async (req, res) => {
+  const userId = req.userId;
   try {
-    await db.run('BEGIN');  // Start transaction
-    const result = await db.run(
-      'INSERT INTO Transaction (buyerId, sellerId, itemId, price, transactionType, notes) VALUES (?, ?, ?, ?, ?, ?)',
-      [buyerId, sellerId, itemId, price, transactionType, notes]
-    );
-    await db.run('UPDATE Listings SET isSold = 1 WHERE id = ?', [itemId]);
-    await db.run('COMMIT');  // Commit transaction
-    res.status(201).json({ message: 'Transaction recorded successfully.', transactionId: result.lastID });
+    const db = await getDBConnection();
+    const user = await db.get('SELECT * FROM User WHERE id = ?', [userId]);
+    const listings = await db.all('SELECT * FROM Listings WHERE userId = ?', [userId]);
+    const purchases = await db.all(`
+      SELECT Transactions.*, Listings.title AS itemTitle
+      FROM Transactions
+      JOIN Listings ON Transactions.itemId = Listings.id
+      WHERE Transactions.buyerId = ?
+    `, [userId]);
+
+    res.json({
+      user: user,
+      listings: listings,
+      purchases: purchases
+    });
   } catch (err) {
-    await db.run('ROLLBACK');  // Rollback in case of error
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
 /**
- * Retrieves account details, including user information and listings.
+ * Generates a unique confirmation number.
+ * @returns {string} A unique alphanumeric confirmation number.
+ */
+function generateConfirmationNumber() {
+  return crypto.randomBytes(8).toString('hex');
+}
+
+/**
+ * Records a transaction between a buyer and a seller.
  * @param {Request} req - The Express request object.
  * @param {Response} res - The Express response object.
  */
-app.get('/account', authMiddleware, async (req, res) => {
-  const userId = req.userId; // Ensure this is coming from the auth middleware
-  console.log(`Fetching account details for userId: ${userId}`); // Log userId for debugging
-  try {
-    const db = await getDBConnection();
-    const user = await db.get('SELECT * FROM User WHERE id = ?', [userId]);
-    if (!user) {
-      console.log(`User not found for userId: ${userId}`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-    console.log(`User found: ${user.email}`);
-    const listings = await db.all(`
-      SELECT Listings.*, User.email AS sellerEmail
-      FROM Listings
-      JOIN User ON Listings.userId = User.id
-      WHERE Listings.userId = ?
-    `, [userId]);
-    console.log(`Found ${listings.length} listings for userId: ${userId}`);
-    res.json({ user, listings });
-  } catch (err) {
-    console.error(`Error fetching account details for userId: ${userId}`, err);
-    res.status(500).json({ error: err.message });
-  }
-});
+app.post('/transaction', authMiddleware, async (req, res) => {
+  const { buyerId, sellerId, itemId, price } = req.body;
+  const db = await getDBConnection();
 
-/**
- * Checks if the specified item is available for purchase.
- * This endpoint retrieves the sale status of an item by its ID.
- * 
- * @param {Request} req - The Express request object, containing the item's ID.
- * @param {Response} res - The Express response object, which will return the item's availability.
- */
-app.get('/check-item/:id', async (req, res) => {
-  const itemId = req.params.id;
-  try {
-    const db = await getDBConnection();
-    const item = await db.get('SELECT isSold FROM Listings WHERE id = ?', [itemId]);
-    if (!item) {
-      console.log(`Item with ID ${itemId} not found`);
-      res.status(404).json({ error: 'Item not found' });
-    } else if (item.isSold === 1) { // Check if isSold is 1 (sold)
-      console.log(`Item with ID ${itemId} is already sold`);
-      res.json({ available: false });
-    } else {
-      res.json({ available: true });
+  db.serialize(async () => {
+    try {
+      await db.run('BEGIN TRANSACTION');
+
+      const itemCheck = await db.get('SELECT isSold FROM Listings WHERE id = ?', [itemId]);
+      if (!itemCheck) {
+        throw new Error('Item does not exist');
+      } else if (itemCheck.isSold !== 0) {
+        throw new Error('Item is already sold');
+      }
+
+      const confirmationNumber = generateConfirmationNumber();
+
+      await db.run(
+        'INSERT INTO Purchases (buyerId, sellerId, itemId, price, confirmationNumber) VALUES (?, ?, ?, ?, ?)',
+        [buyerId, sellerId, itemId, price, confirmationNumber]
+      );
+
+      await db.run('UPDATE Listings SET isSold = 1 WHERE id = ?', [itemId]);
+
+      await db.run('COMMIT');
+
+      res.status(201).json({ success: true, confirmationNumber: confirmationNumber });
+    } catch (err) {
+      await db.run('ROLLBACK');
+      console.error('Transaction error:', err);
+      res.status(500).json({ success: false, message: 'Transaction failed: ' + err.message });
+    } finally {
+      await db.close();
     }
-  } catch (err) {
-    console.error(`Failed to check item availability for item ID ${itemId}`, err);
-    res.status(500).json({ error: 'Internal server error', details: err.message });
-  }
+  });
 });
 
 /**
