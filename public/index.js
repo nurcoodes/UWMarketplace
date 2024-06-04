@@ -345,7 +345,7 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({email, password})
     })
       .then(checkStatus)
       .then(resp => resp.json())
@@ -383,7 +383,7 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({email, password})
     })
       .then(checkStatus)
       .then(resp => resp.json())

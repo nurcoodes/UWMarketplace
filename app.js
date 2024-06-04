@@ -67,9 +67,8 @@ app.post('/userauth/login', async (req, res) => {
   const {email, password} = req.body;
   try {
     const db = await getDBConnection();
-    const user = await db.get(
-      'SELECT * FROM User WHERE email = ? AND password = ?', [email, password]
-      );
+    const user = await db.get('SELECT * FROM User WHERE email = ? ' +
+      'AND password = ?', [email, password]);
     if (user) {
       const sessionId = generateSessionId();
       sessions[sessionId] = user.id;
@@ -112,7 +111,7 @@ app.post('/upload/item', authMiddleware, async (req, res) => {
       'INSERT INTO Listings (title, description, image, contact, category, price, userId) ' +
       'VALUES (?, ?, ?, ?, ?, ?, ?)',
       [title, description, image, contact, category, price, req.userId]
-      );
+    );
     res.status(201).json({message: 'Item successfully uploaded.', itemId: result.lastID});
   } catch (err) {
     console.error(err);
