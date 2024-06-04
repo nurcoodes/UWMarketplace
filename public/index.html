@@ -27,6 +27,8 @@
         <option value="automobile">Automobile</option>
         <option value="miscellaneous">Miscellaneous</option>
       </select>
+      <label for="search-bar">Search:</label>
+      <input type="text" id="search-bar" placeholder="Search items...">
       <div id="items-list" class="items-list">
         <!-- Items will be added here -->
       </div>
@@ -101,7 +103,8 @@
       <p id="listing-price"></p>
       <p id="listing-contact"></p>
       <p id="listing-seller-email"></p>
-      <button id="buy-listing">Buy</button>
+      <button id="transaction-button">Confirm Purchase</button>
+      <p id="confirmation-message" style="display:none;"></p>
       <button id="back-to-listings">Back to Listings</button>
     </div>
 
