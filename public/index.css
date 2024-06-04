@@ -80,9 +80,9 @@ header nav a:hover {
   width: 85%;
 }
 
-/* .item.no-image {
+.item.no-image {
   background: #eee url('img/stockphoto.jpeg') no-repeat center;
-} */
+}
 
 .items-list {
   display: flex;
