@@ -319,6 +319,7 @@
 
   /**
    * Handles the successful upload of an item.
+   * @param {newItem} - the new item being uploaded
    */
   function handleUploadSuccess(newItem) {
     id('items-list').appendChild(createItemElement(newItem));
